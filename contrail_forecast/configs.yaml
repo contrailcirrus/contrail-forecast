@@ -1,0 +1,97 @@
+cocip_grid_params:
+  dt_integration: 5 minutes
+  max_age: 10 hours
+  met_slice_dt: 1 hours
+  target_split_size: 1_000_000
+  target_split_size_pre_SAC_boost: 2.5
+  max_altitude_m:
+  min_altitude_m:
+  azimuth:
+  segment_length:
+  dsn_dz_factor: 0.665
+  interpolation_use_indices: true
+  interpolation_bounds_error: false
+  interpolation_q_method: cubic-spline
+  downselect_met: false
+  verbose_outputs_formation:
+    - persistent
+  filter_sac: true
+  copy_source: false
+  show_progress: false
+
+
+distributions:
+  wind_shear_enhancement_exponent:
+    name: triang
+    params:
+      loc: 0.0
+      scale: 1.0
+      c: 0.5
+
+  initial_wake_vortex_depth:
+    name: triang
+    params:
+      loc: 0.3
+      scale: 0.4
+      c: 0.5
+
+  sedimentation_impact_factor:
+    name: norm
+    params:
+      loc: 0.5
+      scale: 0.1
+
+  nvpm_ei_n_enhancement_factor:
+    name: lognorm
+    params:
+      s: 0.15
+      scale: 0.988813044611233  # = 1 / lognorm(s=0.15).mean()
+
+  rf_sw_enhancement_factor:
+    name: norm
+    params:
+      loc: 1.0
+      scale: 0.106
+  
+  rf_lw_enhancement_factor:
+    name: norm
+    params:
+      loc: 1.0
+      scale: 0.071
+
+  habit_distributions:
+    name: habit_dirichlet
+    params:
+      C: 96.0
+
+
+source_params:
+  horizontal_resolution: 0.25
+  flight_levels:
+    - 270
+    - 280
+    - 290
+    - 300
+    - 310
+    - 320
+    - 330
+    - 340
+    - 350
+    - 360
+    - 370
+    - 380
+    - 390
+    - 400
+    - 410
+    - 420
+    - 430
+    - 440
+
+
+monte_carlo:
+  n_rollouts: 100
+
+
+era5_zarr:
+  pl_store: gs://contrails-301217-ecmwf-era5-zarr/era5_pl.zarr
+  sl_store: gs://contrails-301217-ecmwf-era5-zarr/era5_sl.zarr

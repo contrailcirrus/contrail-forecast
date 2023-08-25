@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "contrail-forecast"
+requires-python = ">=3.9"
+dynamic = ["version"]
+
+dependencies = [
+    "gcsfs>=2021.10",
+    "numpy>=1.22",
+    "pandas>=1.4",
+    "pycontrails>=0.47",
+    "pyyaml>=6.0",
+    "scipy>=1.10",
+    "zarr>=2.12",
+]
+
+[project.optional-dependencies]
+
+dev = ["ruff>=0.0.259"]
+
+
+[tool.ruff]
+select = ["D", "E", "F", "I", "PL"]
+line-length = 100
