@@ -17,8 +17,14 @@ cocip_grid_params:
     - persistent
   filter_sac: true
   copy_source: false
-  show_progress: false
+  show_progress: true
+  aircraft_performance: empirical
 
+aircraft_performance_params:
+  ps:
+    maxiter: 10
+  empirical:
+    data_path: gs://contrails-301217-contrail-forecast-data/test/empirical-grid/group_1_light_mass_nominal_ein.pq
 
 distributions:
   wind_shear_enhancement_exponent:
@@ -45,14 +51,14 @@ distributions:
     name: lognorm
     params:
       s: 0.15
-      scale: 0.988813044611233  # = 1 / lognorm(s=0.15).mean()
+      scale: 0.988813044611233 # = 1 / lognorm(s=0.15).mean()
 
   rf_sw_enhancement_factor:
     name: norm
     params:
       loc: 1.0
       scale: 0.106
-  
+
   rf_lw_enhancement_factor:
     name: norm
     params:
@@ -63,7 +69,6 @@ distributions:
     name: habit_dirichlet
     params:
       C: 96.0
-
 
 source_params:
   horizontal_resolution: 0.25
@@ -87,10 +92,8 @@ source_params:
     - 430
     - 440
 
-
 monte_carlo:
   n_rollouts: 100
-
 
 era5_zarr:
   pl_store: gs://contrails-301217-ecmwf-era5-zarr/era5_pl.zarr

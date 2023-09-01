@@ -9,6 +9,8 @@ import pandas as pd
 import scipy.stats
 import yaml
 from pycontrails import MetDataset
+from pycontrails.core.aircraft_performance import AircraftPerformanceGrid
+from pycontrails.ext.empirical_grid import EmpiricalGrid
 from pycontrails.models.cocip import habit_dirichlet
 from pycontrails.models.cocipgrid import CocipGridParams
 from pycontrails.models.ps_model import PSGrid
@@ -62,10 +64,35 @@ def load_distributions() -> dict[str, rv_frozen]:
     return out
 
 
+def create_aircraft_performance(
+    name: str, rng: np.random.Generator
+) -> AircraftPerformanceGrid:
+    """Create aircraft performance grid."""
+    configs = load_configs()
+    name = configs["cocip_grid_params"]["aircraft_performance"]
+    params = configs["aircraft_performance_params"][name]
+    if name == "ps":
+        return PSGrid(**params)
+    if name == "empirical":
+        data = pd.read_parquet(params["data_path"])
+        data = data.rename(
+            columns={
+                "aircraft_type_icao": "aircraft_type",
+                "wing_span": "wingspan",
+            }
+        )
+        return EmpiricalGrid(data=data, random_state=rng)
+    raise ValueError(
+        f"Unknown aircraft performance grid: {name}. Supported: ps, empirical"
+    )
+
+
 def create_cocip_grid_params(rng: np.random.Generator) -> CocipGridParams:
     """Create parameters for CocipGrid."""
     configs = load_configs()
     params = configs["cocip_grid_params"]
+    ap_name = params["aircraft_performance"]
+    aircraft_performance = create_aircraft_performance(ap_name, rng)
 
     rvs = load_distributions()
     distr = {key: distr.rvs(random_state=rng) for key, distr in rvs.items()}
@@ -89,7 +116,7 @@ def create_cocip_grid_params(rng: np.random.Generator) -> CocipGridParams:
         filter_sac=params["filter_sac"],
         copy_source=params["copy_source"],
         show_progress=params["show_progress"],
-        aircraft_performance=PSGrid(),
+        aircraft_performance=aircraft_performance,
         **distr,
     )
 

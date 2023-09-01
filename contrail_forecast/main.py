@@ -8,7 +8,7 @@ from pycontrails.models.cocipgrid import CocipGrid
 def eval_task(t: np.datetime64, seed: int) -> None:
     """Evaluate the task.
 
-    Should be run in some data processing pipeline.    
+    Should be run in some data processing pipeline.
     """
     met = utils.open_met()
     rad = utils.open_rad()
