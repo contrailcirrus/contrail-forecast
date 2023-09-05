@@ -2,7 +2,25 @@
 
 import numpy as np
 import utils
+import xarray as xr
 from pycontrails.models.cocipgrid import CocipGrid
+
+
+def _fix_attrs(ds: xr.Dataset) -> xr.Dataset:
+    """Ensure the attributes are serializable via xr.Dataset.to_netcdf()."""
+    for k, v in ds.attrs.items():
+        if v is None:
+            ds.attrs[k] = "none"
+        elif isinstance(v, np.generic):
+            ds.attrs[k] = v.item()
+    return ds
+
+
+def _save_dataset(ds: xr.Dataset, t: np.datetime64, seed: int) -> None:
+    """Save the dataset to the appropriate location.
+
+    Not yet implemented.
+    """
 
 
 def eval_task(t: np.datetime64, seed: int) -> None:
@@ -20,10 +38,12 @@ def eval_task(t: np.datetime64, seed: int) -> None:
 
     source = utils.create_source(t)
     mds = model.eval(source)
+
     ds = mds.data
     ds.attrs["seed"] = seed
+    ds = _fix_attrs(ds)
 
-    # TODO: save ds somewhere
+    _save_dataset(ds, t, seed)
 
 
 def main() -> None:
