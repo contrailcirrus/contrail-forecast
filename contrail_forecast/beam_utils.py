@@ -25,18 +25,19 @@ class CocipGridFn(beam.DoFn):
         # dies. Make sure weather is loaded lazily, though! This is run by the
         # manager, and the serialized DoFn is sent to the workers as a "starting
         # point."
-        self.met = utils.open_met()
-        self.rad = utils.open_rad()
+        self.met = utils.open_met(configs)
+        self.rad = utils.open_rad(configs)
+        self.configs = configs
     
     def process(self, indata: tuple[np.datetime64, int]) -> Iterable[tuple[str, xr.Dataset]]:
         """Evaluates the task. `indata` should be a tuple of (timestamp, seed)."""
         t, seed = indata
         rng = np.random.default_rng(seed)
-        params = utils.create_cocip_grid_params(rng)
+        params = utils.create_cocip_grid_params(rng, self.configs)
 
         model = CocipGrid(self.met, self.rad, params)
 
-        source = utils.create_source(t)
+        source = utils.create_source(t, self.configs)
         mds = model.eval(source)
 
         ds = mds.data

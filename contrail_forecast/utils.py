@@ -26,9 +26,8 @@ def load_configs() -> dict[str, Any]:
         return yaml.safe_load(fp)
 
 
-def create_source(time: np.datetime64) -> MetDataset:
+def create_source(time: np.datetime64, configs: dict[str, Any]) -> MetDataset:
     """Create CocipGrid source."""
-    configs = load_configs()
     params = configs["source_params"]
 
     delta = params["horizontal_resolution"]
@@ -43,9 +42,8 @@ def create_source(time: np.datetime64) -> MetDataset:
 
 
 @functools.cache
-def load_distributions() -> dict[str, rv_frozen]:
+def load_distributions(configs: dict[str, Any]) -> dict[str, rv_frozen]:
     """Load model parameter distributions."""
-    configs = load_configs()
     distributions = configs["distributions"]
 
     out = {}
@@ -65,10 +63,9 @@ def load_distributions() -> dict[str, rv_frozen]:
 
 
 def create_aircraft_performance(
-    name: str, rng: np.random.Generator
+    name: str, rng: np.random.Generator, configs: dict[str, Any]
 ) -> AircraftPerformanceGrid:
     """Create aircraft performance grid."""
-    configs = load_configs()
     name = configs["cocip_grid_params"]["aircraft_performance"]
     params = configs["aircraft_performance_params"][name]
     if name == "ps":
@@ -87,14 +84,13 @@ def create_aircraft_performance(
     )
 
 
-def create_cocip_grid_params(rng: np.random.Generator) -> CocipGridParams:
+def create_cocip_grid_params(rng: np.random.Generator, configs: dict[str, Any]) -> CocipGridParams:
     """Create parameters for CocipGrid."""
-    configs = load_configs()
     params = configs["cocip_grid_params"]
     ap_name = params["aircraft_performance"]
-    aircraft_performance = create_aircraft_performance(ap_name, rng)
+    aircraft_performance = create_aircraft_performance(ap_name, rng, configs)
 
-    rvs = load_distributions()
+    rvs = load_distributions(configs)
     distr = {key: distr.rvs(random_state=rng) for key, distr in rvs.items()}
 
     return CocipGridParams(
@@ -121,15 +117,13 @@ def create_cocip_grid_params(rng: np.random.Generator) -> CocipGridParams:
     )
 
 
-def open_met() -> MetDataset:
+def open_met(configs: dict[str, Any]) -> MetDataset:
     """Open pl_store Zarr store."""
-    configs = load_configs()
     store = configs["era5_zarr"]["pl_store"]
     return MetDataset.from_zarr(store)
 
 
-def open_rad() -> MetDataset:
+def open_rad(configs: dict[str, Any]) -> MetDataset:
     """Open sl_store Zarr store."""
-    configs = load_configs()
     store = configs["era5_zarr"]["sl_store"]
     return MetDataset.from_zarr(store)
