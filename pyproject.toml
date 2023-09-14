@@ -9,6 +9,7 @@ requires-python = ">=3.9"
 dynamic = ["version"]
 
 dependencies = [
+    "apache-beam>=2.50.0",
     "gcsfs>=2021.10",
     "numpy>=1.22",
     "pandas>=1.4",
