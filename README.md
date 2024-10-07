@@ -8,7 +8,7 @@
 
 Documentation is written in [MyST Markdown](https://myst-parser.readthedocs.io/en/v0.15.0/using/syntax.html) and [reStructuredText](http://docutils.sourceforge.net/rst.html) then built into HTML and PDF with [Sphinx](https://www.sphinx-doc.org/en/master/).
 
-To build documentation, install the `["docs"]` dependencies and run
+To build documentation, install `["docs"]` dependencies (`pip install -e ".[docs]"`) and run
 
 ```bash
 $ make docs-build
