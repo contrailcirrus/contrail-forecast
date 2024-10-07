@@ -1,0 +1,53 @@
+name: docs
+
+# only build docs on prod releases
+on:
+  push:
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install pandoc
+      run: |
+        sudo apt-get -qq update \
+        && sudo apt-get -qq install --no-install-recommends -y pandoc
+
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        cache-dependency-path: pyproject.toml
+
+    - name: Install docs dependencies
+      run: |
+          pip install -U pip
+          pip install ".[docs]"
+
+    - name: Build docs
+      run: make docs-build
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'docs/_build/html/'
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
