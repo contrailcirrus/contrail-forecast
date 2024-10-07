@@ -2,10 +2,9 @@
 requires = ["setuptools", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
-
 [project]
 name = "contrail-forecast"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dynamic = ["version"]
 
 dependencies = [
