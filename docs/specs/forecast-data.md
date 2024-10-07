@@ -34,7 +34,7 @@ Forecast must be globally valid for the same `forecast_reference_time`.
 
 ## Variables
 
-- `contrails` (`float16`): (longitude, latitude, flight_level, time) Continuous contrail forcing index values from [0 - 4] [^contrailindex]
+- `contrails` (`float32`): (longitude, latitude, flight_level, time) Continuous contrail forcing index values from [0 - 4] [^contrailindex]
 	- Attributes:
 		- `units`: ""
 		- `long_name`: Contrail forcing index
