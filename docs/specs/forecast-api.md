@@ -4,7 +4,7 @@
 | **Owner(s)** | Nick Masson |
 | **Status**  | Complete |
 
-# Forecast API Specification
+# Contrail Forecast API
 
 ## Table of Contents
 

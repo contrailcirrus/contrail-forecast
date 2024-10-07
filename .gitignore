@@ -1,6 +1,10 @@
 # ide / environment
 venv
+.DS_Store
 
 # build / dist
 __pycache__
 *.egg-info
+
+# docs
+docs/_build

@@ -1,4 +1,4 @@
-# Forecast Data Specification
+# Contrail Forecast Data
 
 This document species the data contract for contrail forecast data.
 This data is intended to be served by the interface defined in the sibling specification [Forecast API](forecast-api.md).
