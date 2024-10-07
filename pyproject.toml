@@ -24,6 +24,7 @@ dev = ["ruff>=0.0.259"]
 
 docs = [
     "doc8>=1.1",
+    "ipython>=8.14",
     "furo>=2024.08",
     "myst-parser>=4.0",
     "nb-clean>=3.3",
