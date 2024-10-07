@@ -15,6 +15,7 @@ Contrail Forecast Specification
     :maxdepth: 1
     :caption: References
 
+    notebooks/forecast-data
     bibliography
     changelog
 

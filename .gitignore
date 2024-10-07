@@ -1,6 +1,7 @@
 # ide / environment
 venv
 .DS_Store
+.ipynb_checkpoints
 
 # build / dist
 __pycache__
@@ -9,3 +10,4 @@ __pycache__
 
 # docs
 docs/_build
+docs/notebooks/*.nc
