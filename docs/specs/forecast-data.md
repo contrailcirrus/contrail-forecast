@@ -93,3 +93,5 @@ ds["contrails"] = (ds["cfi"] / 1e9) * 4
 	1 and 2 are generally carrier choice. 3 and 4 are generally ANSP mandated. Category 4 are always climate positive to avoid.
 
 [^efinterpretation]: See [Energy Forcing Interpretation](https://apidocs.contrails.org/ef-interpretation.html) for background informing example mapping from `ef_per_m` to `contrails` index.
+
+## Changelog

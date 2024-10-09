@@ -285,3 +285,5 @@ optional value of altitude
 ([ref](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.1))
 
 e.g. \[165.5,63.12, 10363\]. The altitude value is in units of *meters*.
+
+## Changelog
