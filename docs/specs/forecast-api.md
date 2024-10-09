@@ -1,8 +1,8 @@
 | **Description**  | (EXTERNAL) Forecast API v1 |
-|:--|:--|
-| **Date** | Jul 2024 |
-| **Owner(s)** | Nick Masson |
-| **Status**  | Complete |
+|:--|:---------------------------|
+| **Date** | October 2024               |
+| **Owner(s)** | Nick Masson                |
+| **Status**  | Complete                   |
 
 # Contrail Forecast API
 
@@ -21,18 +21,24 @@ avoidance systems.
 At present, this document specifies two endpoints for general
 availability.
 
-1.  **grids**: The first endpoint surfaces gridded netCDF content of
-    *estimated contrail climate forcing* (\[J/m\] values), at 0.25
+1.  **grids**: The first endpoint surfaces gridded netCDF content of at 0.25
     degree grid spacing, across standardized flight levels, on a one
     hour interval, at all longitudes and latitudes ranging from \[-80,
     80\] (this is expected to expand and encompass the poles, with an
     update at a later time). These grids are available across several
-    [aircraft classes](#aircraft-classes).
+    [aircraft classes](#aircraft-classes).  The variable returned in the netCDF
+    is `contrails`, a domain-agnostic quantity of arbitrary units,
+    existing in the range of \[0, 4]\, `0` being a location with no contrail impact, 
+    and `4` being a location with severe contrail impact.  The value of `contrails`
+    is intended to scale, roughly, with the CO2 equivalence of contrail impact, and by extension,
+    scale with the equivalent fuel penalty for avoiding a given region.
+    i.e. one should be willing to burn 2x as much fuel to avoid a location with `contrails` of `3`
+    over a region with `contrails` of `1.5`.
 
 2.  **regions**: The second endpoint surfaces *contrail avoidance
     regions* (aka polygons) served as geoJSON content, at the same
     flight levels and temporal intervals as the grid above. Regions are
-    available at several pre-defined \[J/m\] thresholds.
+    available at pre-defined `contrails` thresholds of \[1, 2, 3, 4\].
 
 These endpoints are opinionated and intended (primarily) for
 machine-to-machine integration. These two endpoints represent a minimal
@@ -154,7 +160,7 @@ A 400 status code and informative message should be returned if:
 ### response object
 
 The netCDF object returned from the API represents contrail climate
-forcing grid \[J/m\] outputs, on a 0.25 degree by 0.25 degree basis, for
+forcing in an arbitrary `contrails` unit, on a 0.25 degree by 0.25 degree basis, for
 a given flight level. The longitude range extends around the entire
 globe. The latitude range extends from 80N to 80S.
 
@@ -170,7 +176,7 @@ Coordinates:
   * flight_level      (flight_level) int16 2B 300
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
 Data variables:
-    ef_per_m   (longitude, latitude, flight_level, time) float32 4MB ...
+    contrails   (longitude, latitude, flight_level, time) float32 4MB ...
 ```
 
 Note that there are no dataset level *Attributes* included in the netCDF
@@ -187,8 +193,10 @@ Coordinates:
   * flight_level      (flight_level) int16 2B 270
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
 Attributes:
-    long_name:  Energy forcing per meter of flight trajectory
-    units:      J / m
+    long_name:  'Contrail forcing index'
+    units:      ''
+    valid_min:  0
+    valid_max:  4
 ```
 
 <div style="page-break-after: always;"></div>
@@ -239,19 +247,12 @@ Same as [grids.flight_level](#flight-level)
 
 ### threshold
 
-The threshold value represents the \[J/m\] threshold used in generating
-the regions polygons.
-
-A regions polygon with a positive threshold will surround a region where
-the contained contrail climate forcing \[J/m\] values are greater than
-or equal to the threshold. A regions polygon with a negative threshold
-will similarly surround a region where the contained contrail climate
-forcing \[J/m\] values are less than or equal to the threshold.
+The threshold value is the `contrails` value used in generating
+the regions polygons.  A polygon of a given threshold will surround
+a region of `contrails` values equal or greater than the threshold.
 
 The threshold value provided by the client must be one of the following:
-
-\[-1, 1, 10000000, 25000000, 50000000, 75000000, 100000000, 250000000,
-500000000, 750000000, 1000000000\]
+\[ 1, 2, 3, 4\]
 
 ### error handling
 
@@ -265,20 +266,20 @@ format:
 ```text
 {
   "type": "FeatureCollection",
-  "features": {
-    "type": "Feature",
-    "properties": {},
-    "geometry": {
-      "type": "MultiPolygon",
-      "coordinates": []
-    }
-  }
+  "features": [
+      {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "MultiPolygon",
+          "coordinates": []
+        }
+      }
+  ]
 }
 ```
 
-Note that the `FeatureCollection` holds a single Feature, and the features
-key holds a JSON blob as value, rather than a list of JSON blobs as
-value (both conventions are conformant with geoJSON).
+Note that the `FeatureCollection` holds a single Feature.
 
 The positions defined in the polygon coordinates include the third
 optional value of altitude
@@ -287,3 +288,9 @@ optional value of altitude
 e.g. \[165.5,63.12, 10363\]. The altitude value is in units of *meters*.
 
 ## Changelog
+
+### 2024.10.09
+- `/grids` endpoint updated to return a modified netCDF file, replacing the variable `ef_per_m` with the variable `contrails`
+- `/regions` endpoint updated to return geoJSON polygons rendered with a threshold based on `contrails` rather than `ef_per_m`
+  - new supported threshold include `[1, 2, 3, 4]`
+- `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
