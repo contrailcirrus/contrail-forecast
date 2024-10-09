@@ -21,7 +21,7 @@ avoidance systems.
 At present, this document specifies two endpoints for general
 availability.
 
-1.  **grids**: The first endpoint surfaces gridded netCDF content of at 0.25
+1.  **grids**: The first endpoint surfaces gridded netCDF content at 0.25
     degree grid spacing, across standardized flight levels, on a one
     hour interval, at all longitudes and latitudes ranging from \[-80,
     80\] (this is expected to expand and encompass the poles, with an
