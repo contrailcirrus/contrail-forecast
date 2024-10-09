@@ -1,9 +1,3 @@
-| **Description**  | (EXTERNAL) Forecast API v1 |
-|:--|:---------------------------|
-| **Date** | October 2024               |
-| **Owner(s)** | Nick Masson                |
-| **Status**  | Complete                   |
-
 # Contrail Forecast API
 
 ## Table of Contents
