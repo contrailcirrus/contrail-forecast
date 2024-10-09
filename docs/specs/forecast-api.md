@@ -31,7 +31,7 @@ availability.
     existing in the range of \[0, 4]\, `0` being a location with no contrail impact, 
     and `4` being a location with severe contrail impact.  The value of `contrails`
     is intended to scale, roughly, with the CO2 equivalence of contrail impact, and by extension,
-    scale with the equivalent fuel penalty for avoiding a given region.
+    the appropriate fuel investment for avoiding a given region.
     i.e. one should be willing to burn 2x as much fuel to avoid a location with `contrails` of `3`
     over a region with `contrails` of `1.5`.
 
