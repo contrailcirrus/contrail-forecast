@@ -53,9 +53,8 @@ Additional attributes, in addition to the required and suggested ones above, may
 Example scaling translates `ef_per_m` [^efinterpretation] to `contrails`  index via:
 
 ```
-ds["contrails"] = ds["ef_per_m"].clip(min=0, max=1e9)
-ds["contrails"] = xr.where(ds["contrails"] < 1e7, 0, ds["contrails"])
-ds["contrails"] = (ds["cfi"] / 1e9) * 4
+ds["contrails"] = ds["ef_per_m"].clip(min=1e7, max=1e9)
+ds["contrails"] = ((ds["contrails"] - 1e7) / (1e9 - 1e7)) * 4
 ```
 
 ## Test
@@ -90,9 +89,9 @@ ds["contrails"] = (ds["cfi"] / 1e9) * 4
 [^contrailindex]: Influenced by turbulence forecasts
 
 	- 0: None
-	- 1: Light
+	- 1: Low (Light)
 	- 2: Moderate
-	- 3: Severe
+	- 3: High (Severe)
 	- 4: Extreme
 
 	1 and 2 are generally carrier choice. 3 and 4 are generally ANSP mandated. Category 4 are always climate positive to avoid.
