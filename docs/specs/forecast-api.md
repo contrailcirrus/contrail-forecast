@@ -183,11 +183,11 @@ Attributes:
     aircraft_class: "default"
 ```
 
-Note that `forecast_reference_time` in the dataset level _Attributes_ has the same definition as
+Note that `forecast_reference_time` in the dataset level *Attributes* has the same definition as
 `model_run_at` in the API response header.
 See the [Forecast Data spec](forecast-data.md) for more info.
 
-The `contrails` data variable has the following _Attributes_:
+The `contrails` data variable has the following *Attributes*:
 
 ```text
 <xarray.DataArray 'contrails' (longitude: 1440, latitude: 641, level: 1, time: 1)> Size: 4MB
