@@ -21,6 +21,8 @@ Reported in ISO 8601 `"YYYY-MM-DDTHH:MM:SSZ"` e.g. `"2024-10-07T01:00:00Z"`.
 One of \[`"low_e"`, `"default"`, `"high_e"`\], where suffix `_e` references *emissions*.[^emissions]
 - (optional) `model` (`str`): A descriptor of the model used in generating the `contrails` variable.
 
+Additional attributes, in addition to the required and suggested ones above, may be added at the author's discretion.
+
 ## Dimensions
 
 - `longitude` (`float32`): `np.arange(-180, 180, 0.25)`, EPSG:4326
