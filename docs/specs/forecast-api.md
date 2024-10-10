@@ -266,6 +266,9 @@ The threshold value provided by the client must be one of the following:
 
 Same as [grids.error_handling](#error-handling)
 
+## response headers
+Same as [grids.response_headers](#response-headers)
+
 ### response object
 
 The geoJSON object returned is a FeatureCollection, with the following
