@@ -120,15 +120,6 @@ If multiple candidate URIs exist for a given timestamp at the time of
 the client request, the API should return the URI whose outputs were
 generated using the nearest forecast time.
 
-Additionally, the following values must be populated in the response
-header, to contextualize the nature of the data in the response
-(imperative since the behavior of the API is not idempotent given the
-above-mentioned behavior).
-
-- `model_forecast_hour`: `<int>`
-- `model_prediction_at`: `<%Y-%m-%dT%H:%M:%S>`
-- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>`
-
 ### flight level
 
 The fl value represents the flight level (*hectofeet*) of the returned
@@ -150,6 +141,25 @@ A 422 status code and informative message should be returned if:
 A 400 status code and informative message should be returned if:
 
 - the request is properly formed and interpretable, but the requested resource does not exist
+
+### response headers
+The following values must be populated in the response
+header, to contextualize the nature of the data in the response
+(imperative since the behavior of the API is not idempotent given the
+above-mentioned behavior).
+
+- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>`
+- `model_prediction_at`: `<%Y-%m-%dT%H:%M:%S>`
+- `model_forecast_hour`: `<int>`
+
+`model_run_at` is the time at which the HRES meteorological model was executed,
+for those HRES forecasts used in running the CoCip model.
+
+`model_predicted_at` is the time of the CoCip model prediction. i.e. it is the same as the `<ts>` value
+passed in the API call, and the `time` of the data returned in the gridded netCDF.
+
+`model_forecast_hour` is the difference, in hours, between `model_predicted_at` and `model_run_at`.
+It represents how far out the meteorological forecast is for a given CoCip output.
 
 ### response object
 
