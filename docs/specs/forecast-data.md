@@ -14,9 +14,14 @@ Forecast must be globally valid for the same `forecast_reference_time`.
 
 ## Global Attributes
 
-- `forecast_reference_time` (`str`): The forecast reference time is the "data time", i.e. the time of the analysis from which the forecast was made. Reported in ISO 8601 `"YYYY-MM-DDTHH:MM:SSZ"` e.g. `"2024-10-07T01:00:00Z"`.
-- `aircraft_class` (`str`): Aircraft class for forecast. One of \[`"low_e"`, `"default"`, `"high_e"`\], where suffix `_e` references *emissions*.[^emissions]
-- `model_version` (`str`): Model version identifier
+- `forecast_reference_time` (`str`): The forecast reference time is the "data time", 
+i.e. the time at which the meteorological model was executed for a given set of forecast times. 
+Reported in ISO 8601 `"YYYY-MM-DDTHH:MM:SSZ"` e.g. `"2024-10-07T01:00:00Z"`.
+- (optional) `aircraft_class` (`str`): Aircraft class for forecast. 
+One of \[`"low_e"`, `"default"`, `"high_e"`\], where suffix `_e` references *emissions*.[^emissions]
+- (optional) `model` (`str`): A descriptor of the model used in generating the `contrails` variable.
+
+Additional attributes, in addition to the required and suggested ones above, may be added at the author's discretion.
 
 ## Dimensions
 

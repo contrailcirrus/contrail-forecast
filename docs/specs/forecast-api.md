@@ -120,15 +120,6 @@ If multiple candidate URIs exist for a given timestamp at the time of
 the client request, the API should return the URI whose outputs were
 generated using the nearest forecast time.
 
-Additionally, the following values must be populated in the response
-header, to contextualize the nature of the data in the response
-(imperative since the behavior of the API is not idempotent given the
-above-mentioned behavior).
-
-- `model_forecast_hour`: `<int>`
-- `model_prediction_at`: `<%Y-%m-%dT%H:%M:%S>`
-- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>`
-
 ### flight level
 
 The fl value represents the flight level (*hectofeet*) of the returned
@@ -151,6 +142,25 @@ A 400 status code and informative message should be returned if:
 
 - the request is properly formed and interpretable, but the requested resource does not exist
 
+### response headers
+The following values must be populated in the response
+header, to contextualize the nature of the data in the response
+(imperative since the behavior of the API is not idempotent given the
+above-mentioned behavior).
+
+- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>`
+- `model_prediction_at`: `<%Y-%m-%dT%H:%M:%S>`
+- `model_forecast_hour`: `<int>`
+
+`model_run_at` is the time at which the HRES meteorological model was executed,
+for those HRES forecasts used in running the CoCip model.
+
+`model_predicted_at` is the time of the CoCip model prediction. i.e. it is the same as the `<ts>` value
+passed in the API call, and the `time` of the data returned in the gridded netCDF.
+
+`model_forecast_hour` is the difference, in hours, between `model_predicted_at` and `model_run_at`.
+It represents how far out the meteorological forecast is for a given CoCip output.
+
 ### response object
 
 The netCDF object returned from the API represents contrail climate
@@ -171,15 +181,19 @@ Coordinates:
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
 Data variables:
     contrails   (longitude, latitude, flight_level, time) float32 4MB ...
+Attributes:
+    forecast_reference_time:  "2024-07-01T06:00:00Z"
+    aircraft_class: "default"
 ```
 
-Note that there are no dataset level *Attributes* included in the netCDF
-object.
+Note that `forecast_reference_time` in the dataset level *Attributes* has the same definition as
+`model_run_at` in the API response header.
+See the [Forecast Data spec](forecast-data.md) for more info.
 
-The `ef_per_m` data variable has the following *Attributes*:
+The `contrails` data variable has the following *Attributes*:
 
 ```text
-<xarray.DataArray 'ef_per_m' (longitude: 1440, latitude: 641, level: 1, time: 1)> Size: 4MB
+<xarray.DataArray 'contrails' (longitude: 1440, latitude: 641, level: 1, time: 1)> Size: 4MB
 [923040 values with dtype=float32]
 Coordinates:
   * longitude  (longitude) float32 6kB -180.0 -179.8 -179.5 ... 179.5 179.8
@@ -252,6 +266,9 @@ The threshold value provided by the client must be one of the following:
 
 Same as [grids.error_handling](#error-handling)
 
+## response headers
+Same as [grids.response_headers](#response-headers)
+
 ### response object
 
 The geoJSON object returned is a FeatureCollection, with the following
@@ -284,7 +301,8 @@ e.g. \[165.5,63.12, 10363\]. The altitude value is in units of *meters*.
 ## Changelog
 
 ### 2024.10.09
-- `/grids` endpoint updated to return a modified netCDF file, replacing the variable `ef_per_m` with the variable `contrails`
+- `/grids` endpoint updated to return a modified netCDF file, replacing the variable `ef_per_m` with the variable `contrails`,
+and adding `forcast_reference_time` and `aircraft_class` to the netCDF global attributes.
 - `/regions` endpoint updated to return geoJSON polygons rendered with a threshold based on `contrails` rather than `ef_per_m`
   - new supported threshold include `[1, 2, 3, 4]`
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
