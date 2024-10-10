@@ -171,15 +171,19 @@ Coordinates:
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
 Data variables:
     contrails   (longitude, latitude, flight_level, time) float32 4MB ...
+Attributes:
+    forecast_reference_time:  "2024-07-01T06:00:00Z"
+    aircraft_class: "default"
 ```
 
-Note that there are no dataset level *Attributes* included in the netCDF
-object.
+Note that `forecast_reference_time` in the dataset level *Attributes* is has the same definition as
+`model_run_at` in the API response header.
+See the [Forecast Data spec](forecast-data.md) for more info.
 
-The `ef_per_m` data variable has the following *Attributes*:
+The `contrails` data variable has the following *Attributes*:
 
 ```text
-<xarray.DataArray 'ef_per_m' (longitude: 1440, latitude: 641, level: 1, time: 1)> Size: 4MB
+<xarray.DataArray 'contrails' (longitude: 1440, latitude: 641, level: 1, time: 1)> Size: 4MB
 [923040 values with dtype=float32]
 Coordinates:
   * longitude  (longitude) float32 6kB -180.0 -179.8 -179.5 ... 179.5 179.8
@@ -284,7 +288,8 @@ e.g. \[165.5,63.12, 10363\]. The altitude value is in units of *meters*.
 ## Changelog
 
 ### 2024.10.09
-- `/grids` endpoint updated to return a modified netCDF file, replacing the variable `ef_per_m` with the variable `contrails`
+- `/grids` endpoint updated to return a modified netCDF file, replacing the variable `ef_per_m` with the variable `contrails`,
+and adding `forcast_reference_time` and `aircraft_class` to the netCDF global attributes.
 - `/regions` endpoint updated to return geoJSON polygons rendered with a threshold based on `contrails` rather than `ef_per_m`
   - new supported threshold include `[1, 2, 3, 4]`
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
