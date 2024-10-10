@@ -143,23 +143,20 @@ A 400 status code and informative message should be returned if:
 - the request is properly formed and interpretable, but the requested resource does not exist
 
 ### response headers
-The following values must be populated in the response
-header, to contextualize the nature of the data in the response
-(imperative since the behavior of the API is not idempotent given the
-above-mentioned behavior).
 
-- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>`
-- `model_prediction_at`: `<%Y-%m-%dT%H:%M:%S>`
-- `model_forecast_hour`: `<int>`
+The response header must populate the following values to contextualize the response data.
+*Populating these headers is imperative since the behavior of the API is not idempotent given the
+behavior mentioned above.*
 
-`model_run_at` is the time at which the HRES meteorological model was executed,
-for those HRES forecasts used in running the CoCip model.
-
-`model_predicted_at` is the time of the CoCip model prediction. i.e. it is the same as the `<ts>` value
-passed in the API call, and the `time` of the data returned in the gridded netCDF.
-
-`model_forecast_hour` is the difference, in hours, between `model_predicted_at` and `model_run_at`.
-It represents how far out the meteorological forecast is for a given CoCip output.
+- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>` - The analysis time of the forecast.
+  This is the same as the [*forecast_reference_time* as defined by CF conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.1Analysistime:theforecastreferencetime).
+- `model_prediction_at` (`<%Y-%m-%dT%H:%M:%S>`): The valid time of the model prediction,
+  i.e. it is the same as the `<ts>` value passed in the API call,
+  and the `time` of the data returned in the gridded netCDF.
+  This is the same as the [*valid time* as defined by CF Conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.3Validtime).
+- `model_forecast_hour` (`<int>`): The difference, in hours, between `model_predicted_at` and `model_run_at`.
+  It represents how far out the meteorological forecast is for a given model output.
+  This is similar to the [*forecast period* as defined by CF Conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.2Forecast:theforecastperiod).
 
 ### response object
 
@@ -186,11 +183,11 @@ Attributes:
     aircraft_class: "default"
 ```
 
-Note that `forecast_reference_time` in the dataset level *Attributes* has the same definition as
+Note that `forecast_reference_time` in the dataset level _Attributes_ has the same definition as
 `model_run_at` in the API response header.
 See the [Forecast Data spec](forecast-data.md) for more info.
 
-The `contrails` data variable has the following *Attributes*:
+The `contrails` data variable has the following _Attributes_:
 
 ```text
 <xarray.DataArray 'contrails' (longitude: 1440, latitude: 641, level: 1, time: 1)> Size: 4MB
