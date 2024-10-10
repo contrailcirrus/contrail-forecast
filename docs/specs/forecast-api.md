@@ -176,7 +176,7 @@ Attributes:
     aircraft_class: "default"
 ```
 
-Note that `forecast_reference_time` in the dataset level *Attributes* is has the same definition as
+Note that `forecast_reference_time` in the dataset level *Attributes* has the same definition as
 `model_run_at` in the API response header.
 See the [Forecast Data spec](forecast-data.md) for more info.
 
