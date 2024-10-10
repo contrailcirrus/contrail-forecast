@@ -89,9 +89,9 @@ ds["contrails"] = ((ds["contrails"] - 1e7) / (1e9 - 1e7)) * 4
 [^contrailindex]: Influenced by turbulence forecasts
 
 	- 0: None
-	- 1: Light
+	- 1: Low (Light)
 	- 2: Moderate
-	- 3: Severe
+	- 3: High (Severe)
 	- 4: Extreme
 
 	1 and 2 are generally carrier choice. 3 and 4 are generally ANSP mandated. Category 4 are always climate positive to avoid.
