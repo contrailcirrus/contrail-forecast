@@ -94,7 +94,7 @@ ds["contrails"] = ((ds["contrails"] - 1e7) / (1e9 - 1e7)) * 4
 	- 3: High (Severe)
 	- 4: Extreme
 
-	1 and 2 are generally carrier choice. 3 and 4 are generally ANSP mandated. Category 4 are always climate positive to avoid.
+	For turbulence, 1 and 2 are generally carrier choice, while 3 and 4 are generally ANSP mandated.
 
 [^efinterpretation]: See [Energy Forcing Interpretation](https://apidocs.contrails.org/ef-interpretation.html) for background informing example mapping from `ef_per_m` to `contrails` index.
 
