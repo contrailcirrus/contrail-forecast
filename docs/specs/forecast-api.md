@@ -148,7 +148,7 @@ The response header must populate the following values to contextualize the resp
 *Populating these headers is imperative since the behavior of the API is not idempotent given the
 behavior mentioned above.*
 
-- `model_run_at`: `<%Y-%m-%dT%H:%M:%S>` - The analysis time of the forecast.
+- `model_run_at` (`<%Y-%m-%dT%H:%M:%S>`): The analysis time of the forecast.
   This is the same as the [*forecast_reference_time* as defined by CF conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.1Analysistime:theforecastreferencetime).
 - `model_prediction_at` (`<%Y-%m-%dT%H:%M:%S>`): The valid time of the model prediction,
   i.e. it is the same as the `<ts>` value passed in the API call,
