@@ -22,7 +22,7 @@ availability.
     update at a later time). These grids are available across several
     [aircraft classes](#aircraft-classes).  The variable returned in the netCDF
     is `contrails`, a domain-agnostic quantity of arbitrary units,
-    existing in the range of \[0, 4]\, `0` being a location with no contrail impact, 
+    existing in the range of \[0, 4]\, `0` being a location with no contrail impact,
     and `4` being a location with severe contrail impact.  The value of `contrails`
     is intended to scale, roughly, with the CO2 equivalence of contrail impact, and by extension,
     the appropriate fuel investment for avoiding a given region.
