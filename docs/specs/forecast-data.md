@@ -53,19 +53,18 @@ Additional attributes, in addition to the required and suggested ones above, may
 Example scaling translates `ef_per_m` [^efinterpretation] to `contrails`  index via:
 
 ```
-ds["contrails"] = ds["ef_per_m"].clip(min=1e7, max=1e9)
-ds["contrails"] = ((ds["contrails"] - 1e7) / (1e9 - 1e7)) * 4
+ds["contrails"] = ds["ef_per_m"].clip(min=1e7, max=2e9)
+ds["contrails"] = ((ds["contrails"] - 1e7) / (2e9 - 1e7)) * 4
 ```
 
 ## Test
 
-- [ ] Establish a few tests for *substantially equivalent* data distributions
-	- Histogram comparisons
+- [ ] Establish benchmark datasets for *substantially equivalent* data distributions
 - [ ] Share 1 day of input data per quarter for validation exercise
 
 ## Implementation
 
-- [ ] Add example (or two) of cost function implementation
+- [ ] Add examples of cost function implementation
 
 ## References
 
