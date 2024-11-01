@@ -20,7 +20,9 @@ availability.
     hour interval, at all longitudes and latitudes ranging from \[-80,
     80\] (this is expected to expand and encompass the poles, with an
     update at a later time). These grids are available across several
-    [aircraft classes](#aircraft-classes).  The variable returned in the netCDF
+    [aircraft classes](#aircraft-classes); only the `default` aircraft class is served until 
+    there is sufficient customer evidence to suggest needing the implementation of additional aircraft classes. 
+    The variable returned in the netCDF
     is `contrails`, a domain-agnostic quantity of arbitrary units,
     existing in the range of \[0, 4]\, `0` being a location with no contrail impact,
     and `4` being a location with severe contrail impact.  The value of `contrails`
@@ -34,15 +36,15 @@ availability.
     flight levels and temporal intervals as the grid above. Regions are
     available at pre-defined `contrails` thresholds of \[1, 2, 3, 4\].
 
-These endpoints are opinionated and intended (primarily) for
-machine-to-machine integration. These two endpoints represent a minimal
+These two endpoints represent a minimal
 yet complete set of capabilities for air traffic planners to explore and
 prototype contrail avoidance in air traffic decision support systems.
 
 The signature, behavior and design considerations of these two endpoints
 are detailed below.
 
-Future work may include adding a discovery/recommendation endpoint, to
+Future work, contingent upon the implementation of multiple aircraft classes,
+may include adding a discovery/recommendation endpoint, to
 help consumers map aircraft configuration attributes to a recommended
 aircraft class. The materialization of such an endpoint requires
 additional product discovery, and should not block or hinder adoption of
@@ -52,17 +54,14 @@ the endpoints currently in GA.
 
 ## grids
 
-The `v1/grids` route returns pre-rendered netCDF assets. The URI of the
-specific asset is fully defined by the suffixed path parameters. This
-endpoint effectively acts as a wrapper for content distribution of
-static assets in cloud storage.
+The `v1/grids` route returns pre-rendered netCDF assets.
 
 ### signature
 
 Request
 
 ```
-GET /v1/grids/aircraft_class/{ac_id}/timestamp/{ts}/flight_level/{fl} HTTP/2
+GET /v1/grids?aircraft_class={ac_id}&timestamp={ts}&flight_level={fl} HTTP/2
 Host: {TBD}
 Headers:
     x-api-key: {key}
@@ -84,12 +83,10 @@ The `{key}` passed in `x-api-key` is a static (no expiry) token.
 
 ### aircraft classes
 
-`{ac_id}`, which defines the aircraft_class, is one of:
+`{ac_id}`, which defines the aircraft_class, is an optional query parameter.
+If provided, a singular value, `default`, is supported.
 
-- `low_e`
-- `default`
-- `high_e`
-
+Possible future classes include the following: `low_e`, `high_e`.
 These aircraft classes correspond to the following pairs of
 representative aircraft type and engine configurations. See [Engberg et al 2024](https://egusphere.copernicus.org/preprints/2024/egusphere-2024-1361/)
 for more details on the creation of these aircraft classes.
@@ -108,7 +105,8 @@ and ordinal yet leave sufficient room for future expansion.
 
 ### timestamp
 
-The `ts` value has the form `%Y%m%d%H`. This hour-resolution timestamp
+The `ts` value has the form `%Y%m%d%H`. It is a required query parameter.
+This hour-resolution timestamp
 represents the target time of the model prediction ("predicted_at"
 time).
 
@@ -123,7 +121,7 @@ generated using the nearest forecast time.
 ### flight level
 
 The fl value represents the flight level (*hectofeet*) of the returned
-netCDF global grid.
+netCDF global grid. It is a required query parameter.
 
 The fl value must be one of the following:
 
@@ -218,7 +216,7 @@ static assets in cloud storage.
 Request
 
 ```text
-GET /v1/regions/aircraft_class/{ac_id}/timestamp/{ts}/flight_level/{fl}/threshold/{threshold} HTTP/2
+GET /v1/regions?aircraft_class={ac_id}&timestamp={ts}&flight_level={fl}&threshold={threshold} HTTP/2
 Host: {TBD}
 Headers:
     x-api-key: {key}
@@ -229,9 +227,6 @@ Response
 ```text
 Headers:
     content-type: application/geo+json
-    model_forecast_hour: <int>
-    model_prediction_at: <%Y-%m-%dT%H:%M:%S>
-    model_run_at: <%Y-%m-%dT%H:%M:%S>
 ```
 
 ### auth
@@ -253,7 +248,8 @@ Same as [grids.flight_level](#flight-level)
 ### threshold
 
 The threshold value is the `contrails` value used in generating
-the regions polygons.  A polygon of a given threshold will surround
+the regions polygons.  It is a required query parameter.
+A polygon of a given threshold will surround
 a region of `contrails` values equal or greater than the threshold.
 
 The threshold value provided by the client must be one of the following:
@@ -277,7 +273,15 @@ format:
   "features": [
       {
         "type": "Feature",
-        "properties": {},
+        "properties": {
+            "aircraft_class": "default",
+            "timestamp": "<%Y-%m-%dT%H:%M:%S>",
+            "flight_level": <int>,
+            "threshold": <int>,
+            "model_forecast_hour": <int>,
+            "model_prediction_at": <%Y-%m-%dT%H:%M:%S>,
+            "model_run_at": <%Y-%m-%dT%H:%M:%S>
+        },
         "geometry": {
           "type": "MultiPolygon",
           "coordinates": []
@@ -286,8 +290,6 @@ format:
   ]
 }
 ```
-
-Note that the `FeatureCollection` holds a single Feature.
 
 The positions defined in the polygon coordinates include the third
 optional value of altitude
@@ -303,3 +305,8 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 - `/regions` endpoint updated to return geoJSON polygons rendered with a threshold based on `contrails` rather than `ef_per_m`
   - new supported threshold include `[1, 2, 3, 4]`
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
+
+## 2024.TBD
+- `/grids` endpoint reworked to move all path parameters to query parameters
+- `/regions` endpoint reworked to move all path parameters to query parameters
+- `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
