@@ -307,6 +307,6 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
 
 ## 2024.TBD
-- `/grids` endpoint reworked to move all path parameters to query parameters
-- `/regions` endpoint reworked to move all path parameters to query parameters
+- `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
+- `/regions` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
 - `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
