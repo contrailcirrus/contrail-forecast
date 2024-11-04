@@ -105,7 +105,7 @@ and ordinal yet leave sufficient room for future expansion.
 
 ### timestamp
 
-The `ts` value has the form `%Y%m%d%H`. It is a required query parameter.
+The `{ts}` value has the form `%Y%m%d%H`. It is a required query parameter.
 This hour-resolution timestamp
 represents the target time of the model prediction ("predicted_at"
 time).
