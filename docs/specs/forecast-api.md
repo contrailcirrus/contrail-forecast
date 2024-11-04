@@ -262,9 +262,7 @@ format:
             "timestamp": "<%Y-%m-%dT%H:%M:%S>",
             "flight_level": <int>,
             "threshold": <int>,
-            "model_forecast_hour": <int>,
-            "model_prediction_at": <%Y-%m-%dT%H:%M:%S>,
-            "model_run_at": <%Y-%m-%dT%H:%M:%S>
+            "forecast_reference_time": <%Y-%m-%dT%H:%M:%S>
         },
         "geometry": {
           "type": "MultiPolygon",
@@ -293,5 +291,5 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 ## 2024.TBD
 - `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
 - `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
-- `/regions` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
+- `/regions` endpoint reworked to remove header k-vs, and add `forecast_reference_time` to `Feature` properties. `aircraft_class` is documented, but optional.
 - `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
