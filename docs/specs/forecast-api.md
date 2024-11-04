@@ -174,10 +174,10 @@ Coordinates:
   * latitude   (latitude) float32 3kB -80.0 -79.75 -79.5 ... 79.5 79.75 80.0
   * flight_level      (flight_level) int16 2B 300
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
+    forecast_reference_time (time) datetime64[ns] 8B 2024-07-01T06:00:00
 Data variables:
     contrails   (longitude, latitude, flight_level, time) float32 4MB ...
 Attributes:
-    forecast_reference_time:  "2024-07-01T06:00:00Z"
     aircraft_class: "default"
 ```
 
@@ -308,5 +308,6 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 
 ## 2024.TBD
 - `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
+- `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
 - `/regions` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
 - `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
