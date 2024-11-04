@@ -120,7 +120,7 @@ generated using the nearest forecast time.
 
 ### flight level
 
-The {fl} value represents the flight level (*hectofeet*) of the returned
+The `{fl}` value represents the flight level (*hectofeet*) of the returned
 netCDF global grid. It is a required query parameter.
 
 The fl value must be one of the following:
