@@ -21,7 +21,7 @@ availability.
     80\] (this is expected to expand and encompass the poles, with an
     update at a later time). These grids are available across several
     [aircraft classes](#aircraft-classes); only the `default` aircraft class is served until 
-    there is sufficient customer evidence to suggest needing the implementation of additional aircraft classes. 
+    there is sufficient evidence and agreement to implement additional aircraft classes. 
     The variable returned in the netCDF
     is `contrails`, a domain-agnostic quantity of arbitrary units,
     existing in the range of \[0, 4]\, `0` being a location with no contrail impact,
