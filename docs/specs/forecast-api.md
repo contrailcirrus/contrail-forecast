@@ -43,7 +43,7 @@ prototype contrail avoidance in air traffic decision support systems.
 The signature, behavior and design considerations of these two endpoints
 are detailed below.
 
-Future work, contingent upon the implementation of multiple aircraft classes,
+If/when multiple aircraft classes are implemented, future work may include a discovery/recommendation endpoint to
 may include adding a discovery/recommendation endpoint, to
 help consumers map aircraft configuration attributes to a recommended
 aircraft class. The materialization of such an endpoint requires
