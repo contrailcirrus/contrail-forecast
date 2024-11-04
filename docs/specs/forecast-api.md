@@ -167,9 +167,6 @@ Attributes:
     aircraft_class: "default"
 ```
 
-Note that `forecast_reference_time` non-dimension coordinate has the same definition as
-`model_run_at` in the API response header.
-See the [Forecast Data spec](forecast-data.md) for more info.
 
 The `contrails` data variable has the following *Attributes*:
 
