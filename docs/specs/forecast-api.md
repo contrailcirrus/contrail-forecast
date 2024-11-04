@@ -142,20 +142,6 @@ A 400 status code and informative message should be returned if:
 
 ### response headers
 
-The response header must populate the following values to contextualize the response data.
-*Populating these headers is imperative since the behavior of the API is not idempotent given the
-behavior mentioned above.*
-
-- `model_run_at` (`<%Y-%m-%dT%H:%M:%S>`): The analysis time of the forecast.
-  This is the same as the [*forecast_reference_time* as defined by CF conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.1Analysistime:theforecastreferencetime).
-- `model_prediction_at` (`<%Y-%m-%dT%H:%M:%S>`): The valid time of the model prediction,
-  i.e. it is the same as the `<ts>` value passed in the API call,
-  and the `time` of the data returned in the gridded netCDF.
-  This is the same as the [*valid time* as defined by CF Conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.3Validtime).
-- `model_forecast_hour` (`<int>`): The difference, in hours, between `model_predicted_at` and `model_run_at`.
-  It represents how far out the meteorological forecast is for a given model output.
-  This is similar to the [*forecast period* as defined by CF Conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.2Forecast:theforecastperiod).
-
 ### response object
 
 The netCDF object returned from the API represents contrail climate
@@ -181,7 +167,7 @@ Attributes:
     aircraft_class: "default"
 ```
 
-Note that `forecast_reference_time` in the dataset level *Attributes* has the same definition as
+Note that `forecast_reference_time` non-dimension coordinate has the same definition as
 `model_run_at` in the API response header.
 See the [Forecast Data spec](forecast-data.md) for more info.
 
@@ -195,6 +181,7 @@ Coordinates:
   * latitude   (latitude) float32 3kB -80.0 -79.75 -79.5 ... 79.5 79.75 80.0
   * flight_level      (flight_level) int16 2B 270
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
+    forecast_reference_time (time) datetime64[ns] 8B 2024-07-01T06:00:00
 Attributes:
     long_name:  'Contrail forcing index'
     units:      ''
