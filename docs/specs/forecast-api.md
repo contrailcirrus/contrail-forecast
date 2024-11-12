@@ -103,20 +103,34 @@ for more details on the creation of these aircraft classes.
 The `aircraft_class` values were chosen such that they be self-describing
 and ordinal yet leave sufficient room for future expansion.
 
-### timestamp
+### time
 
-The `{ts}` value has the form `%Y%m%d%H`. It is a required query parameter.
-This hour-resolution timestamp
-represents the target time of the model prediction ("predicted_at"
-time).
+The `{ts}` value must be a valid ISO8601 datetime object. 
+It is a required query parameter.
+
+This time represents the target time of the model prediction.
 
 Given that ECMWF delivers 73 hours of forecast data every 6 hours, it is
 expected that a given ts will have multiple candidate URIs to serve to a
 client.
 
 If multiple candidate URIs exist for a given timestamp at the time of
-the client request, the API should return the URI whose outputs were
-generated using the nearest forecast time.
+the client request, *the API should return the URI whose outputs were
+generated using the nearest forecast reference time.*
+
+#### time-handling behavior
+If the caller provides a timezone designator for the `{ts}` param,
+the API should handle the timezone designator, converting it to a target `time` in UTC
+when fetching (⚠️ please note that response data is **always** in UTC).
+
+If no timezone designator is provided, it is implied UTC.
+
+If the `{ts}` value does not fall exactly on a matching `time` for a forecast resource,
+then the API will floor the `{ts}` value to the nearest interval `time` increment for which a 
+a resource is expected to exist.
+For example, forecasts are currently available on an hourly basis.
+If a caller were to provide `&time=2024-01-12T13:04:11`, the API should attempt to retrieve
+a forecast resource entity matching `2024-01-12T13:00:00`.
 
 ### flight level
 
@@ -130,14 +144,11 @@ The fl value must be one of the following:
 
 ### error handling
 
-A 422 status code and informative message should be returned if:
+A 400 status code and informative message should be returned if:
 
 - the provided flight level is not recognized
 - the provided timestamp is malformed
 - the provided aircraft class is not recognized
-
-A 400 status code and informative message should be returned if:
-
 - the request is properly formed and interpretable, but the requested resource does not exist
 
 ### response headers
@@ -200,7 +211,7 @@ static assets in cloud storage.
 Request
 
 ```text
-GET /v1/regions?aircraft_class={ac_id}&timestamp={ts}&flight_level={fl}&threshold={threshold} HTTP/2
+GET /v1/regions?aircraft_class={ac_id}&time={ts}&flight_level={fl}&threshold={threshold} HTTP/2
 Host: {TBD}
 Headers:
     x-api-key: {key}
@@ -223,7 +234,7 @@ Same as [grids.aircraft_classes](#aircraft-classes)
 
 ### timestamp
 
-Same as [grids.timestamp](#timestamp)
+Same as [grids.time](#time)
 
 ### flight level
 
@@ -259,10 +270,10 @@ format:
         "type": "Feature",
         "properties": {
             "aircraft_class": "default",
-            "timestamp": "<%Y-%m-%dT%H:%M:%S>",
+            "time": "<%Y-%m-%dT%H:%M:%SZ>",
             "flight_level": <int>,
             "threshold": <int>,
-            "forecast_reference_time": <%Y-%m-%dT%H:%M:%S>
+            "forecast_reference_time": <%Y-%m-%dT%H:%M:%SZ>
         },
         "geometry": {
           "type": "MultiPolygon",
@@ -291,5 +302,6 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 ## 2024.TBD
 - `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
 - `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
-- `/regions` endpoint reworked to remove header k-vs, and add `forecast_reference_time` to `Feature` properties. `aircraft_class` is documented, but optional.
+- `/regions` endpoint reworked to remove header k-vs. `aircraft_class` is documented, but optional.
 - `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
+- `/grids` and `/regions` to take a query param `time` (renamed from `timestamp`), with updated handling/interpretation (see [###time](#time) section)
