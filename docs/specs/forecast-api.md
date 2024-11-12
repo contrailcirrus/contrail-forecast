@@ -61,7 +61,7 @@ The `v1/grids` route returns pre-rendered netCDF assets.
 Request
 
 ```
-GET /v1/grids?aircraft_class={ac_id}&timestamp={ts}&flight_level={fl} HTTP/2
+GET /v1/grids?aircraft_class={ac_id}&time={ts}&flight_level={fl} HTTP/2
 Host: {TBD}
 Headers:
     x-api-key: {key}
@@ -72,9 +72,6 @@ Response
 ```
 Headers:
     content-type: application/netcdf
-    model_forecast_hour: <int>
-    model_prediction_at: <%Y-%m-%dT%H:%M:%S>
-    model_run_at: <%Y-%m-%dT%H:%M:%S>
 ```
 
 ### auth
@@ -114,7 +111,7 @@ Given that ECMWF delivers 73 hours of forecast data every 6 hours, it is
 expected that a given ts will have multiple candidate URIs to serve to a
 client.
 
-If multiple candidate URIs exist for a given timestamp at the time of
+If multiple candidate URIs exist for a given `time` at the instance of
 the client request, *the API should return the URI whose outputs were
 generated using the nearest forecast reference time.*
 
@@ -147,7 +144,7 @@ The fl value must be one of the following:
 A 400 status code and informative message should be returned if:
 
 - the provided flight level is not recognized
-- the provided timestamp is malformed
+- the provided time string is malformed
 - the provided aircraft class is not recognized
 - the request is properly formed and interpretable, but the requested resource does not exist
 
@@ -232,7 +229,7 @@ Same as [grids.auth](#auth)
 
 Same as [grids.aircraft_classes](#aircraft-classes)
 
-### timestamp
+### time
 
 Same as [grids.time](#time)
 
