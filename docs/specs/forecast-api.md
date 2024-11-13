@@ -150,6 +150,8 @@ A 400 status code and informative message should be returned if:
 
 ### response headers
 
+No custom response headers.
+
 ### response object
 
 The netCDF object returned from the API represents contrail climate
@@ -252,6 +254,7 @@ The threshold value provided by the client must be one of the following:
 Same as [grids.error_handling](#error-handling)
 
 ## response headers
+
 Same as [grids.response_headers](#response-headers)
 
 ### response object
@@ -301,4 +304,4 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 - `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
 - `/regions` endpoint reworked to remove header k-vs. `aircraft_class` is documented, but optional.
 - `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
-- `/grids` and `/regions` to take a query param `time` (renamed from `timestamp`), with updated handling/interpretation (see [###time](#time) section)
+- `/grids` and `/regions` to take a query param `time` (renamed from `timestamp`), with updated handling/interpretation (see [time](#time) section)
