@@ -25,7 +25,7 @@ Additional attributes, in addition to the required and suggested ones above, may
 - `latitude` (`float32`): `np.arange(-90, 90, 0.25)`, EPSG:4326
 - `flight_level` (`int16` or `int32`): `[270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440]`, hectofeet [^flightlevels]
 - `time` (`int32` or `int64`): [CF compatible time coordinates](https://cfconventions.org/cf-conventions/cf-conventions#time-coordinate).
-- `forecast_reference_time` (`int32` or `int64`): The forecast reference time is the "data time", i.e. the time at which the meteorological model was executed for a given set of forecast times.`
+- `forecast_reference_time` (`int32` or `int64`): The forecast reference time is the "data time", i.e. the time at which the meteorological model was executed for a given set of forecast times. See [*forecast_reference_time* as defined by CF conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.1Analysistime:theforecastreferencetime)
 
 💡 Both `time` and `forecast_reference_time` must have `units` and `calendar` variable attributes. e.g.
 	```
