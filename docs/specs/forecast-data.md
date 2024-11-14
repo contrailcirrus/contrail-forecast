@@ -10,13 +10,10 @@ This document assumes data is stored in a `netCDF4` format.
 
 ## Domain
 
-Forecast must be globally valid for the same `forecast_reference_time`.
+Forecast must be globally valid for each `forecast_reference_time`.
 
 ## Global Attributes
 
-- `forecast_reference_time` (`str`): The forecast reference time is the "data time",
-i.e. the time at which the meteorological model was executed for a given set of forecast times.
-Reported in ISO 8601 `"YYYY-MM-DDTHH:MM:SSZ"` e.g. `"2024-10-07T01:00:00Z"`.
 - (optional) `aircraft_class` (`str`): Aircraft class for forecast.
 One of \[`"low_e"`, `"default"`, `"high_e"`\], where suffix `_e` references *emissions*.[^emissions]
 - (optional) `model` (`str`): A descriptor of the model used in generating the `contrails` variable.
@@ -28,14 +25,30 @@ Additional attributes, in addition to the required and suggested ones above, may
 - `longitude` (`float32`): `np.arange(-180, 180, 0.25)`, EPSG:4326
 - `latitude` (`float32`): `np.arange(-90, 90, 0.25)`, EPSG:4326
 - `flight_level` (`int16` or `int32`): `[270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440]`, hectofeet [^flightlevels]
-- `time` (`int32` or `int64`): [CF compatible time coordinates](https://cfconventions.org/cf-conventions/cf-conventions#time-coordinate). Must have `units` and `calendar` variable attributes. e.g.
+- `time` (`int32` or `int64`): [CF compatible time coordinates](https://cfconventions.org/cf-conventions/cf-conventions#time-coordinate). See [time dimensions](#time-dimensions) for more details.
+- `forecast_reference_time` (`int32` or `int64`): [CF compatible time coordinates](https://cfconventions.org/cf-conventions/cf-conventions#time-coordinate). The forecast reference time is the "data time", i.e. the time at which the meteorological model was executed for each forecast `time` value. See [*forecast_reference_time* as defined by CF conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.1Analysistime:theforecastreferencetime). See [time dimensions](#time-dimensions) for more details.
 
-	```
-	units: hours since 2022-12-12
-	calendar: proleptic_gregorian
-	```
+### Time dimensions
 
-> In general we use `xarray` to encode times directly from `np.datetime64` to CF compatible format. See [xarray Time Units](https://docs.xarray.dev/en/stable/user-guide/io.html#time-units) for more information.
+[CF conventions](https://cfconventions.org/cf-conventions/cf-conventions#time-coordinate) require
+both `time` and `forecast_reference_time` have `units` and `calendar` variable attributes, e.g.:
+
+```
+units: hours since 2022-12-12
+calendar: proleptic_gregorian
+```
+
+When reading or writing netCDF files with [xarray](https://docs.xarray.dev/en/stable), `xarray`
+automatically decodes/encodes datetime arrays using CF conventions
+When reading, `xarray` will decode datetime arrays directly into a `np.datetime64` array and hide the
+`units` and `calendar` attributes.
+When writing, `xarray` uses the `'proleptic_gregorian'` calendar and `units` of the smallest
+time difference between values, with a reference time of the first time value.
+See [xarray Time Units](https://docs.xarray.dev/en/stable/user-guide/io.html#time-units) for more information.
+
+Its valid to write `time` and `forecast_reference_time` as unix time integers, but
+`units` must still be specified as `"seconds since 1970-01-01 00:00:00"`.
+`calendar` attribute may still be specified to define the set of dates (year-month-day combinations) which are permitted.
 
 ## Variables
 

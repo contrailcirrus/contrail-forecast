@@ -20,7 +20,9 @@ availability.
     hour interval, at all longitudes and latitudes ranging from \[-80,
     80\] (this is expected to expand and encompass the poles, with an
     update at a later time). These grids are available across several
-    [aircraft classes](#aircraft-classes).  The variable returned in the netCDF
+    [aircraft classes](#aircraft-classes); only the `default` aircraft class is served until 
+    there is sufficient evidence and agreement to implement additional aircraft classes. 
+    The variable returned in the netCDF
     is `contrails`, a domain-agnostic quantity of arbitrary units,
     existing in the range of \[0, 4]\, `0` being a location with no contrail impact,
     and `4` being a location with severe contrail impact.  The value of `contrails`
@@ -34,15 +36,15 @@ availability.
     flight levels and temporal intervals as the grid above. Regions are
     available at pre-defined `contrails` thresholds of \[1, 2, 3, 4\].
 
-These endpoints are opinionated and intended (primarily) for
-machine-to-machine integration. These two endpoints represent a minimal
+These two endpoints represent a minimal
 yet complete set of capabilities for air traffic planners to explore and
 prototype contrail avoidance in air traffic decision support systems.
 
 The signature, behavior and design considerations of these two endpoints
 are detailed below.
 
-Future work may include adding a discovery/recommendation endpoint, to
+If/when multiple aircraft classes are implemented, future work may include a discovery/recommendation endpoint to
+may include adding a discovery/recommendation endpoint, to
 help consumers map aircraft configuration attributes to a recommended
 aircraft class. The materialization of such an endpoint requires
 additional product discovery, and should not block or hinder adoption of
@@ -52,17 +54,14 @@ the endpoints currently in GA.
 
 ## grids
 
-The `v1/grids` route returns pre-rendered netCDF assets. The URI of the
-specific asset is fully defined by the suffixed path parameters. This
-endpoint effectively acts as a wrapper for content distribution of
-static assets in cloud storage.
+The `v1/grids` route returns pre-rendered netCDF assets.
 
 ### signature
 
 Request
 
 ```
-GET /v1/grids/aircraft_class/{ac_id}/timestamp/{ts}/flight_level/{fl} HTTP/2
+GET /v1/grids?aircraft_class={ac_id}&time={ts}&flight_level={fl} HTTP/2
 Host: {TBD}
 Headers:
     x-api-key: {key}
@@ -73,9 +72,6 @@ Response
 ```
 Headers:
     content-type: application/netcdf
-    model_forecast_hour: <int>
-    model_prediction_at: <%Y-%m-%dT%H:%M:%S>
-    model_run_at: <%Y-%m-%dT%H:%M:%S>
 ```
 
 ### auth
@@ -84,12 +80,10 @@ The `{key}` passed in `x-api-key` is a static (no expiry) token.
 
 ### aircraft classes
 
-`{ac_id}`, which defines the aircraft_class, is one of:
+`{ac_id}`, which defines the aircraft_class, is an optional query parameter.
+If provided, a singular value, `default`, is supported.
 
-- `low_e`
-- `default`
-- `high_e`
-
+Possible future classes include the following: `low_e`, `high_e`.
 These aircraft classes correspond to the following pairs of
 representative aircraft type and engine configurations. See [Engberg et al 2024](https://egusphere.copernicus.org/preprints/2024/egusphere-2024-1361/)
 for more details on the creation of these aircraft classes.
@@ -106,24 +100,39 @@ for more details on the creation of these aircraft classes.
 The `aircraft_class` values were chosen such that they be self-describing
 and ordinal yet leave sufficient room for future expansion.
 
-### timestamp
+### time
 
-The `ts` value has the form `%Y%m%d%H`. This hour-resolution timestamp
-represents the target time of the model prediction ("predicted_at"
-time).
+The `{ts}` value must be a valid ISO8601 datetime object. 
+It is a required query parameter.
+
+This time represents the target time of the model prediction.
 
 Given that ECMWF delivers 73 hours of forecast data every 6 hours, it is
 expected that a given ts will have multiple candidate URIs to serve to a
 client.
 
-If multiple candidate URIs exist for a given timestamp at the time of
-the client request, the API should return the URI whose outputs were
-generated using the nearest forecast time.
+If multiple candidate URIs exist for a given `time` at the instance of
+the client request, *the API should return the URI whose outputs were
+generated using the nearest forecast reference time.*
+
+#### time-handling behavior
+If the caller provides a timezone designator for the `{ts}` param,
+the API should handle the timezone designator, converting it to a target `time` in UTC
+when fetching (⚠️ please note that response data is **always** in UTC).
+
+If no timezone designator is provided, it is implied UTC.
+
+If the `{ts}` value does not fall exactly on a matching `time` for a forecast resource,
+then the API will floor the `{ts}` value to the nearest interval `time` increment for which a 
+a resource is expected to exist.
+For example, forecasts are currently available on an hourly basis.
+If a caller were to provide `&time=2024-01-12T13:04:11`, the API should attempt to retrieve
+a forecast resource entity matching `2024-01-12T13:00:00`.
 
 ### flight level
 
-The fl value represents the flight level (*hectofeet*) of the returned
-netCDF global grid.
+The `{fl}` value represents the flight level (*hectofeet*) of the returned
+netCDF global grid. It is a required query parameter.
 
 The fl value must be one of the following:
 
@@ -132,31 +141,16 @@ The fl value must be one of the following:
 
 ### error handling
 
-A 422 status code and informative message should be returned if:
-
-- the provided flight level is not recognized
-- the provided timestamp is malformed
-- the provided aircraft class is not recognized
-
 A 400 status code and informative message should be returned if:
 
+- the provided flight level is not recognized
+- the provided time string is malformed
+- the provided aircraft class is not recognized
 - the request is properly formed and interpretable, but the requested resource does not exist
 
 ### response headers
 
-The response header must populate the following values to contextualize the response data.
-*Populating these headers is imperative since the behavior of the API is not idempotent given the
-behavior mentioned above.*
-
-- `model_run_at` (`<%Y-%m-%dT%H:%M:%S>`): The analysis time of the forecast.
-  This is the same as the [*forecast_reference_time* as defined by CF conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.1Analysistime:theforecastreferencetime).
-- `model_prediction_at` (`<%Y-%m-%dT%H:%M:%S>`): The valid time of the model prediction,
-  i.e. it is the same as the `<ts>` value passed in the API call,
-  and the `time` of the data returned in the gridded netCDF.
-  This is the same as the [*valid time* as defined by CF Conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.3Validtime).
-- `model_forecast_hour` (`<int>`): The difference, in hours, between `model_predicted_at` and `model_run_at`.
-  It represents how far out the meteorological forecast is for a given model output.
-  This is similar to the [*forecast period* as defined by CF Conventions](https://confluence.ecmwf.int/display/COPSRV/Metadata+recommendations+for+encoding+NetCDF+products+based+on+CF+convention#MetadatarecommendationsforencodingNetCDFproductsbasedonCFconvention-3.3.2Forecast:theforecastperiod).
+No custom response headers.
 
 ### response object
 
@@ -176,16 +170,13 @@ Coordinates:
   * latitude   (latitude) float32 3kB -80.0 -79.75 -79.5 ... 79.5 79.75 80.0
   * flight_level      (flight_level) int16 2B 300
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
+    forecast_reference_time (time) datetime64[ns] 8B 2024-07-01T06:00:00
 Data variables:
     contrails   (longitude, latitude, flight_level, time) float32 4MB ...
 Attributes:
-    forecast_reference_time:  "2024-07-01T06:00:00Z"
     aircraft_class: "default"
 ```
 
-Note that `forecast_reference_time` in the dataset level *Attributes* has the same definition as
-`model_run_at` in the API response header.
-See the [Forecast Data spec](forecast-data.md) for more info.
 
 The `contrails` data variable has the following *Attributes*:
 
@@ -197,6 +188,7 @@ Coordinates:
   * latitude   (latitude) float32 3kB -80.0 -79.75 -79.5 ... 79.5 79.75 80.0
   * flight_level      (flight_level) int16 2B 270
   * time       (time) datetime64[ns] 8B 2024-07-01T12:00:00
+    forecast_reference_time (time) datetime64[ns] 8B 2024-07-01T06:00:00
 Attributes:
     long_name:  'Contrail forcing index'
     units:      ''
@@ -218,7 +210,7 @@ static assets in cloud storage.
 Request
 
 ```text
-GET /v1/regions/aircraft_class/{ac_id}/timestamp/{ts}/flight_level/{fl}/threshold/{threshold} HTTP/2
+GET /v1/regions?aircraft_class={ac_id}&time={ts}&flight_level={fl}&threshold={threshold} HTTP/2
 Host: {TBD}
 Headers:
     x-api-key: {key}
@@ -229,9 +221,6 @@ Response
 ```text
 Headers:
     content-type: application/geo+json
-    model_forecast_hour: <int>
-    model_prediction_at: <%Y-%m-%dT%H:%M:%S>
-    model_run_at: <%Y-%m-%dT%H:%M:%S>
 ```
 
 ### auth
@@ -242,9 +231,9 @@ Same as [grids.auth](#auth)
 
 Same as [grids.aircraft_classes](#aircraft-classes)
 
-### timestamp
+### time
 
-Same as [grids.timestamp](#timestamp)
+Same as [grids.time](#time)
 
 ### flight level
 
@@ -253,7 +242,8 @@ Same as [grids.flight_level](#flight-level)
 ### threshold
 
 The threshold value is the `contrails` value used in generating
-the regions polygons.  A polygon of a given threshold will surround
+the regions polygons.  It is a required query parameter.
+A polygon of a given threshold will surround
 a region of `contrails` values equal or greater than the threshold.
 
 The threshold value provided by the client must be one of the following:
@@ -264,6 +254,7 @@ The threshold value provided by the client must be one of the following:
 Same as [grids.error_handling](#error-handling)
 
 ## response headers
+
 Same as [grids.response_headers](#response-headers)
 
 ### response object
@@ -277,7 +268,13 @@ format:
   "features": [
       {
         "type": "Feature",
-        "properties": {},
+        "properties": {
+            "aircraft_class": "default",
+            "time": "<%Y-%m-%dT%H:%M:%SZ>",
+            "flight_level": <int>,
+            "threshold": <int>,
+            "forecast_reference_time": <%Y-%m-%dT%H:%M:%SZ>
+        },
         "geometry": {
           "type": "MultiPolygon",
           "coordinates": []
@@ -286,8 +283,6 @@ format:
   ]
 }
 ```
-
-Note that the `FeatureCollection` holds a single Feature.
 
 The positions defined in the polygon coordinates include the third
 optional value of altitude
@@ -303,3 +298,10 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
 - `/regions` endpoint updated to return geoJSON polygons rendered with a threshold based on `contrails` rather than `ef_per_m`
   - new supported threshold include `[1, 2, 3, 4]`
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
+
+## 2024.TBD
+- `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
+- `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
+- `/regions` endpoint reworked to remove header k-vs. `aircraft_class` is documented, but optional.
+- `/regions` geoJSON response object updated to include resource-identifying attributes in the `"properties"` object for the geoJSON `Feature`.
+- `/grids` and `/regions` to take a query param `time` (renamed from `timestamp`), with updated handling/interpretation (see [time](#time) section)
