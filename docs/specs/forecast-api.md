@@ -299,7 +299,7 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
   - new supported threshold include `[1, 2, 3, 4]`
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
 
-## 2024.TBD
+## 2024.11.14
 - `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
 - `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
 - `/regions` endpoint reworked to remove header k-vs. `aircraft_class` is documented, but optional.
