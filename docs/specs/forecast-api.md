@@ -131,10 +131,11 @@ a forecast resource entity matching `2024-01-12T13:00:00`.
 
 ### flight level
 
-The `{fl}` value represents the flight level (*hectofeet*) of the returned
-netCDF global grid. It is a required query parameter.
+The `{fl}` value represents a single flight level (*hectofeet*) of the returned
+netCDF global grid. It is an optional query parameter. If no value is passed to `{fl}`,
+then all flight levels are included.
 
-The fl value must be one of the following:
+The fl value must be in the following:
 
 \[270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400,
 410, 420, 430, 440\]
@@ -242,11 +243,14 @@ Same as [grids.flight_level](#flight-level)
 ### threshold
 
 The threshold value is the `contrails` value used in generating
-the regions polygons.  It is a required query parameter.
+the regions polygons.
 A polygon of a given threshold will surround
 a region of `contrails` values equal or greater than the threshold.
 
-The threshold value provided by the client must be one of the following:
+This is an optional query parameter. If no value is passed,
+then all thresholds will be included in the response.
+
+The threshold value provided by the client must be in the following:
 \[ 1, 2, 3, 4\]
 
 ### error handling
@@ -292,6 +296,13 @@ e.g. \[165.5,63.12, 10363\]. The altitude value is in units of *meters*.
 
 ## Changelog
 
+### 2025.01.08
+- `/grids` endpoint now supports returning all flight levels in the response netCDF. This is default behavior when no `fl` query parameter value is passed.
+- `/regions` endpoint now supports returning Features for all flight levels in the response netCDF. 
+This is default behavior when no `fl` query parameter value is passed.
+- `/regions` endpoint now supports returning Features for all threshold (contrail severity) values. 
+This is default behavior when no `threshold` query param value is passed.
+
 ### 2024.10.09
 - `/grids` endpoint updated to return a modified netCDF file, replacing the variable `ef_per_m` with the variable `contrails`,
 and adding `forcast_reference_time` and `aircraft_class` to the netCDF global attributes.
@@ -299,7 +310,7 @@ and adding `forcast_reference_time` and `aircraft_class` to the netCDF global at
   - new supported threshold include `[1, 2, 3, 4]`
 - `/regions` geoJSON response object format updated from `.features.*` to `.features[].*`.
 
-## 2024.11.14
+### 2024.11.14
 - `/grids` endpoint reworked to move all path parameters to query parameters. `aircraft_class` is documented, but optional.
 - `/grids` move `forecast_reference_time` to a non-dimension coordinate; remove `forecast_reference_time` from data-array attributes.
 - `/regions` endpoint reworked to remove header k-vs. `aircraft_class` is documented, but optional.
