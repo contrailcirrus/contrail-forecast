@@ -13,9 +13,9 @@ import datetime
 # -- Project information -----------------------------------------------------
 
 project = "Contrail Forecast"
-copyright = f"{datetime.datetime.now().year}, Reviate, Google"
+copyright = f"{datetime.datetime.now().year}, Contrails.org, Google"
 
-author = "Reviate, Google"
+author = "Contrails.org, Google"
 version = "1"
 release = "1"
 
