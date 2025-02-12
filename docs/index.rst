@@ -25,5 +25,5 @@ Contrail Forecast Specification
     :caption: Links
 
     Google Forecast API <https://developers.google.com/contrails>
-    Contrails.org Research API <https://api.contrails.org>
+    Contrails.org API <https://api.contrails.org>
     pycontrails <https://github.com/contrailcirrus/pycontrails>

@@ -1,10 +1,9 @@
-# contrail-forecast
+# Contrail Forecast Specification
 
-> Generate contrail forecasts by running [pycontrails](https://py.contrails.org) models with [Apache Beam](https://beam.apache.org/).
+Contrail forecast data and API specification.
+Hosted at [contrailcirrus.github.io/contrail-forecast](https://contrailcirrus.github.io/contrail-forecast/index.html).
 
-**This project is currently a work in progress.**
-
-## Documentation
+## Develop
 
 Documentation is written in [MyST Markdown](https://myst-parser.readthedocs.io/en/v0.15.0/using/syntax.html) and [reStructuredText](http://docutils.sourceforge.net/rst.html) then built into HTML and PDF with [Sphinx](https://www.sphinx-doc.org/en/master/).
 
