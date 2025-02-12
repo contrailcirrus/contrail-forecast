@@ -3,6 +3,9 @@ venv
 .DS_Store
 .ipynb_checkpoints
 .idea
+.ropeproject
+*.sublime-project
+*.sublime-workspace
 
 # build / dist
 __pycache__
