@@ -13,7 +13,7 @@ import datetime
 # -- Project information -----------------------------------------------------
 
 project = "Contrail Forecast"
-copyright = f"{datetime.datetime.now().year}, Contrails.org, Google"
+copyright = f"{datetime.datetime.now().year}, Contrails.org and the Breakthrough Energy Foundation, Google"
 
 author = "Contrails.org, Google"
 version = "1"
