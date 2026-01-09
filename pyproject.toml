@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contrail-forecast"
+requires-python = ">=3.11"
+dynamic = ["version"]
+
+dependencies = []
+
+[project.optional-dependencies]
+
+dev = ["ruff>=0.0.259"]
+
+docs = [
+    "doc8>=1.1",
+    "ipython>=8.14",
+    "furo>=2024.08",
+    "myst-parser>=4.0",
+    "nb-clean>=3.3",
+    "nbsphinx>=0.9",
+    "pytest-check-links>=0.8.0",
+    "sphinx>=8.0",
+    "sphinx-autobuild>=2024.10",
+    "sphinxcontrib-bibtex>=2.6",
+    "sphinx_copybutton>=0.5",
+]
+
+[tool.ruff]
+select = ["D", "E", "F", "I", "PL"]
+line-length = 100
